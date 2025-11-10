@@ -1,13 +1,15 @@
 package customers;
 
-import customers.domain.CreditCard;
-import customers.domain.Customer;
-import customers.repository.CustomerRepository;
+import customers.domain.Address;
+import customers.domain.Student;
+import customers.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -15,7 +17,7 @@ import java.util.List;
 public class Application implements CommandLineRunner {
 
 	@Autowired
-	private CustomerRepository customerRepository;
+	private StudentRepository studentRepository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
@@ -23,40 +25,43 @@ public class Application implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-        // create customer
-		Customer customer = new Customer(101,"John doe", "johnd@acme.com", "0622341678");
-		CreditCard creditCard = new CreditCard("12324564321", "Visa", "11/23");
-		customer.setCreditCard(creditCard);
-		customerRepository.save(customer);
-		customer = new Customer(109,"John Jones", "jones@acme.com", "0624321234");
-		creditCard = new CreditCard("657483342", "Visa", "09/23");
-		customer.setCreditCard(creditCard);
-		customerRepository.save(customer);
-		customer = new Customer(66,"James Johnson", "jj123@acme.com", "068633452");
-		creditCard = new CreditCard("99876549876", "MasterCard", "01/24");
-		customer.setCreditCard(creditCard);
-		customerRepository.save(customer);
-		//get customers
-		System.out.println(customerRepository.findById(66).get());
-		System.out.println(customerRepository.findById(101).get());
-		System.out.println("-----------All customers ----------------");
-		System.out.println(customerRepository.findAll());
-		//update customer
-		customer = customerRepository.findById(101).get();
-		customer.setEmail("jd@gmail.com");
-		customerRepository.save(customer);
-		System.out.println("-----------find by phone ----------------");
-		System.out.println(customerRepository.findByPhone("0622341678"));
-		System.out.println("-----------find by email ----------------");
-		System.out.println(customerRepository.findCustomerWithEmail("jj123@acme.com"));
-		System.out.println("-----------find customers with a certain type of creditcard ----------------");
-		List<Customer> customers = customerRepository.findCustomerWithCreditCardType("Visa");
-		for (Customer cust : customers){
-			System.out.println(cust);
-		}
+		Student student1 = new Student(
+				"Anil Shrestha", 9801123456L, "anil.shrestha@email.com",
+				new Address("Kathmandu Road", "Kathmandu", 44600)
+		);
 
-		System.out.println("-----------find by name ----------------");
-		System.out.println(customerRepository.findByName("John doe"));
+		Student student2 = new Student(
+				"Sita Gurung", 9802234567L, "sita.gurung@email.com",
+				new Address("Pokhara Lane", "Pokhara", 33700)
+		);
+
+		Student student3 = new Student(
+				"Anil Shrestha", 9803345678L, "aneel.shrestha@email.com",
+				new Address("Lalitpur Street", "Kathmandu", 44700)
+		);
+
+		Student student4 = new Student(
+				"Maya Koirala", 9804456789L, "maya.koirala@email.com",
+				new Address("Biratnagar Road", "Biratnagar", 56600)
+		);
+
+		Student student5 = new Student(
+				"Bikash Lama", 9805567890L, "bikash.lama@email.com",
+				new Address("Bharatpur Avenue", "Bharatpur", 44200)
+		);
+
+		List<Student> students = new ArrayList<>(Arrays.asList(student1, student2, student3, student4, student5));
+		studentRepository.saveAll(students);
+
+		// Get All Students
+		studentRepository.findAll().forEach(System.out::println);
+
+		// Get All Students with certain name
+		studentRepository.findByName("Anil Shrestha").forEach(System.out::println);
+		// Get a student by phoneNumber
+		System.out.println(studentRepository.findByPhoneNumber(9805567890L));
+		// Get All Students in same city
+		studentRepository.findByAddress_City("Kathmandu").forEach(System.out::println);
 
 	}
 
